@@ -1,0 +1,6 @@
+---
+- name: Install and Configure Consul
+  become: yes
+  hosts: consul
+  roles:
+    - role: consul
