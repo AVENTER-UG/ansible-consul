@@ -1,0 +1,39 @@
+---
+
+- name: get ips
+  set_fact:
+    ips: "[{% for host in groups['consul'] %}{% for a in hostvars[host]['ansible_facts']['all_ipv4_addresses'] %}\"{{ a }}\"{% if not loop.last %},{% endif %} {% endfor %}{% if not loop.last %},{% endif %} {% endfor %}]"
+
+- name: Allow access to port 8500
+  community.general.ufw:
+    rule: allow
+    port: '8500'
+    proto: tcp
+    from_ip: "{{ item }}"
+  with_items: "{{ ips }}"
+
+- name: Allow access to port 8300
+  community.general.ufw:
+    rule: allow
+    port: '8300'
+    proto: tcp
+    from_ip: "{{ item }}"
+  with_items: "{{ ips }}"
+
+- name: Allow access to port 8301
+  community.general.ufw:
+    rule: allow
+    port: '8301'
+    proto: any
+    from_ip: "{{ item }}"
+  with_items: "{{ ips }}"
+
+- name: Allow access to port 8302
+  community.general.ufw:
+    rule: allow
+    port: '8302'
+    proto: any
+    from_ip: "{{ item }}"
+  with_items: "{{ ips }}"
+
+
