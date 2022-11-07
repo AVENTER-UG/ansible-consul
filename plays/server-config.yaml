@@ -4,6 +4,8 @@
   hosts: consul
   roles:
     - role: consul
+      tags:
+        - update
     - role: ufw_rules
       tags:
         - ufw
