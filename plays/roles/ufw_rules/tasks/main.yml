@@ -1,0 +1,66 @@
+---
+
+- name: install packages centos
+  package:
+    name:
+      - ufw
+
+- name: enable ufw
+  lineinfile: 
+    dest: /etc/ufw/ufw.conf
+    state: present 
+    regexp: "ENABLED=*"
+    line: "ENABLED=yes"
+
+- name: enable and start ufw systemd
+  service: 
+    name: ufw
+    enabled: yes 
+    state: started
+
+- name: get ips
+  set_fact:
+    ips: "[{% for host in groups['consul'] %}{% for a in hostvars[host]['ansible_facts']['all_ipv4_addresses'] %}\"{{ a }}\"{% if not loop.last %},{% endif %} {% endfor %}{% if not loop.last %},{% endif %} {% endfor %}]"
+
+- name: Allow access to port 8500
+  community.general.ufw:
+    rule: allow
+    port: '8500'
+    proto: tcp
+    from_ip: "{{ item }}"
+  with_items:  
+    - "{{ ips }}"
+    - "127.0.0.1/32"
+
+
+- name: Allow access to port 8300
+  community.general.ufw:
+    rule: allow
+    port: '8300'
+    proto: tcp
+    from_ip: "{{ item }}"
+  with_items: 
+    - "{{ ips }}"
+    - "127.0.0.1/32"
+
+- name: Allow access to port 8301
+  community.general.ufw:
+    rule: allow
+    port: '8301'
+    proto: any
+    from_ip: "{{ item }}"
+  with_items: 
+    - "{{ ips }}"
+    - "127.0.0.1/32"
+
+- name: Allow access to port 8302
+  community.general.ufw:
+    rule: allow
+    port: '8302'
+    proto: any
+    from_ip: "{{ item }}"
+  with_items: 
+    - "{{ ips }}"
+    - "127.0.0.1/32"
+
+

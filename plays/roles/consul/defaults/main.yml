@@ -63,3 +63,5 @@ consul_port_rpc: 8400
 consul_port_serf_lan: 8301
 consul_port_serf_wan: 8302
 consul_port_server: 8300
+
+eth_if: "eth0"
